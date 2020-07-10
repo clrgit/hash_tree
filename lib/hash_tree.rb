@@ -124,16 +124,11 @@ module HashTree
     # Note that for this to work, keys may not contain a dots ('.')
     def path() @path ||= ancestors(true)[1..-1].join(".") end
 
-    # Compare two objects by path
-    def <=>(r) path <=> r.path end
-
     # A set node is rendered as its key
     def to_s() key.to_s end
   end
 
   class Map < Node
-    def <=>(r) raise NotImplementedError; end
-
     # A map node is rendered as its object_id
     def to_s() object_id.to_s end
   end
