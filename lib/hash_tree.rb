@@ -8,8 +8,14 @@ require "indented_io"
 #   o traverse
 #   o #ancestors and #parents as enumerators
 #   o HashTree::Set, HashTree::Map, HashTree::Array
+#   o Semantics of <=>: strictly partial so it returns nil on no common path?
+#   o Drop <=> ?
+#   o Implement #common to return common path of two elements
+#   o modularize?
 #
 module HashTree
+  class Error < StandardError; end
+
   class Node
     attr_reader :parent
     attr_reader :children
@@ -22,9 +28,9 @@ module HashTree
     def attach(key, child) do_attach(key, child) end
 
     def detach(key, ignore_not_attached: false)
-      @children.key?(key) or raise "Non-existing child key: #{key.inspect}"
+      @children.key?(key) or raise Error, "Non-existing child key: #{key.inspect}"
       child = children[key]
-      ignore_not_attached || child.parent or raise "Child is not attached"
+      ignore_not_attached || child.parent or raise Error, "Child is not attached"
       child.instance_variable_set(:@parent, nil)
       @children.delete(key)
       child.send(:clear_cached_properties)
@@ -52,13 +58,15 @@ module HashTree
     #
     # Note that for this to work, keys may not contain a dots ('.')
     def dot(path)
-      path.split(".").inject(self) { |a,e| a[e] or raise "Can't lookup '#{e}' in #{a.path.inspect}" }
+      path.split(".").inject(self) { |a,e| 
+        a[e] or raise Error, "Can't lookup '#{e}' in #{a.path.inspect}" 
+      }
     end
 
   protected
     def do_attach(key, child)
-      !@children.key?(key) or raise "Duplicate child key: #{key.inspect}"
-      !child.parent or raise "Child is already attached"
+      !@children.key?(key) or raise Error, "Duplicate child key: #{key.inspect}"
+      !child.parent or raise Error, "Child is already attached"
       child.instance_variable_set(:@parent, self)
       @children[key] = child
       child.send(:clear_cached_properties)
@@ -90,8 +98,7 @@ module HashTree
     attr_reader :key
 
     def initialize(parent, key)
-      @key = key
-      super(parent, key)
+      super(parent, @key = key)
     end
 
     def attach(child) do_attach(child.key, child) end
