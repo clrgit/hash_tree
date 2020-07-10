@@ -16,8 +16,13 @@ require "indented_io"
 module HashTree
   class Error < StandardError; end
 
+  # The base Node type for HashTree implementations. It is not supposed to be called
+  # from user-code
   class Node
+    # Parent node. nil for the root node
     attr_reader :parent
+
+    # Hash from key to child node
     attr_reader :children
 
     def initialize(parent, key)
@@ -25,8 +30,10 @@ module HashTree
       parent&.do_attach(key, self)
     end
     
+    # Attach a child to self
     def attach(key, child) do_attach(key, child) end
 
+    # Detach a child from self
     def detach(key, ignore_not_attached: false)
       @children.key?(key) or raise Error, "Non-existing child key: #{key.inspect}"
       child = children[key]
@@ -36,7 +43,10 @@ module HashTree
       child.send(:clear_cached_properties)
     end
 
+    # Lookup node by key
     def [](key) @children[key] end
+
+    # Returns true iff key is included in children
     def key?(key) @children.key?(key) end
 
     # The root object or self if parent is nil
@@ -77,9 +87,9 @@ module HashTree
     # tree. Should be called whenever the node is attached or detached from a
     # tree
     #
-    # Note that to speed up the process, it stop recursion when a node has no
+    # Note that to speed up the process, it stops recursing when a node has no
     # cached properties. This is using the fact that the cached properties are
-    # themselves constructed recursively so that if a node has a cached
+    # themselves constructed recursively so that iff a node has a cached
     # property, then all its parents will also cache it
     def clear_cached_properties()
       if@root || @parents || @ancestors || @path
@@ -95,6 +105,7 @@ module HashTree
   class Set < Node
     alias node_attach attach
 
+    # Key of this node
     attr_reader :key
 
     def initialize(parent, key)
