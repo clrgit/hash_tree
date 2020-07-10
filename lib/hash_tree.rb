@@ -31,6 +31,9 @@ module HashTree
     end
     
     # Attach a child to self
+    #
+    # Implementation is in #do_attach to share code with HashTree::Set#attach
+    # that only takes one parameters
     def attach(key, child) do_attach(key, child) end
 
     # Detach a child from self
@@ -64,7 +67,7 @@ module HashTree
       (@ancestors ||= parents(false).reverse) + (include_self ? [self] : [])
     end
 
-    # Recursively lookup object by dot-separated list of names
+    # Recursively lookup object by dot-separated list of keys
     #
     # Note that for this to work, keys may not contain a dots ('.')
     def dot(path)
@@ -74,6 +77,7 @@ module HashTree
     end
 
   protected
+    # Attach a child node to self
     def do_attach(key, child)
       !@children.key?(key) or raise Error, "Duplicate child key: #{key.inspect}"
       !child.parent or raise Error, "Child is already attached"
