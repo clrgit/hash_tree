@@ -9,9 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Claus Rasmussen"]
   spec.email         = ["claus.l.rasmussen@gmail.com"]
 
-  spec.summary       = %q{hash_tree gem}
-  spec.description   = %q{hash_tree gem}
-  spec.homepage      = "http://www.nowhere.com/"
+  spec.summary       = %q{A tree implemented as nested hashes}
+  spec.description   = %q{HashTree::Set and HashTree::Map provides simple tree
+                          operations. It is still very much work-in-progress }
+  spec.homepage      = "https://github.com/clrgit/hash_tree"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
