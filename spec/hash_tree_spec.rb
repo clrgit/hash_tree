@@ -114,18 +114,6 @@ describe HashTree do
       end
     end
 
-    describe "#<=>" do
-      it "compared two objects by path" do
-        alt_root = HashTree::Set.new(nil, "root")
-        alt_lvl1 = HashTree::Set.new(alt_root, "LVL1")
-        alt_lvl2 = HashTree::Set.new(alt_lvl1, "LVL2")
-        expect(alt_lvl2 <=> lvl2).to eq 0
-        expect(lvl1 <=> lvl2).to eq -1
-        expect(lvl3 <=> lvl2).to eq 1
-      end
-      it "fails if the nodes are not part of the same tree"
-    end
-
     describe "#to_s" do
       it "renders its #key" do
         expect(lvl1.to_s).to eq lvl1.key.to_s
