@@ -12,6 +12,7 @@ require "indented_io"
 #   o Drop <=> ?
 #   o Implement #common to return common path of two elements
 #   o modularize?
+#   o []=
 #
 module HashTree
   class Error < StandardError; end
@@ -53,7 +54,7 @@ module HashTree
     def key?(key) @children.key?(key) end
 
     # The root object or self if parent is nil
-    def root() @root ||= parents.last || self end
+    def root() @root ||= (parent&.root || self) end
 
     # List of parents up to the root element. If include_self is true, also
     # include self as the first element
