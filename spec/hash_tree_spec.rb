@@ -106,6 +106,15 @@ describe HashTree do
       end
     end
 
+    describe "#retach" do
+      it "moves the node from its current parent to self" do
+        root.retach(lvl2)
+        expect(lvl2.parent).to be root
+        expect(root.children.values).to eq [lvl1, lvl2]
+        expect(lvl1.children.values).to eq []
+      end
+    end
+
     describe "#path" do
       it "returns the object's path from the root element" do
         expect(root.path).to eq ""

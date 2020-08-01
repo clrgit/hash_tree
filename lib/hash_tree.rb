@@ -119,6 +119,11 @@ module HashTree
 
     def attach(child) do_attach(child.key, child) end
 
+    def retach(node)
+      node.parent.detach(node.key)
+      attach(node)
+    end
+
     # Unique dot-separated list of keys leading from the root object to 
     # self. Note that the root object is not included in the path so that
     #
