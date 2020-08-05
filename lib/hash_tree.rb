@@ -68,6 +68,15 @@ module HashTree
       (@ancestors ||= parents(false).reverse) + (include_self ? [self] : [])
     end
 
+    # List of children nodes
+    def each(&block)
+      if block_given?
+        children.values.each { |child| yield(child) }
+      else
+        children.values.each
+      end
+    end
+
     # Recursively lookup object by dot-separated list of keys
     #
     # Note that for this to work, keys may not contain a dots ('.')

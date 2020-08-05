@@ -77,6 +77,23 @@ shared_examples_for "a HashTree::Node" do |klass|
     end
   end
 
+  describe "#each" do
+    context "with a block" do
+      it "executes the block on each child" do
+        result = []
+        lvl3.each { |node| result << node }
+        expect(result).to eq [lvl4_1, lvl4_2, lvl4_3]
+      end
+    end
+    context "without a block" do
+      it "returns an enumerator of the child nodes" do
+        val = lvl3.each
+        expect(val).to be_a Enumerator
+        expect(val.to_a).to eq [lvl4_1, lvl4_2, lvl4_3]
+      end
+    end
+  end
+
   describe "#dot" do
     it "looks up a path and return the matching node" do
       expect(root.dot("")).to be root
@@ -84,7 +101,6 @@ shared_examples_for "a HashTree::Node" do |klass|
       expect(root.dot("LVL1.LVL2.LVL3.LVL4_3")).to be lvl4_3
     end
   end
-
 end
 
 describe HashTree do
