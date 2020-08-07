@@ -68,8 +68,17 @@ module HashTree
       (@ancestors ||= parents(false).reverse) + (include_self ? [self] : [])
     end
 
-    # List of children nodes
+    # List of [key, child] tuples
     def each(&block)
+      if block_given?
+        children.each { |key, child| yield(key, child) }
+      else
+        children.each
+      end
+    end
+
+    # List of child nodes
+    def each_child(&block)
       if block_given?
         children.values.each { |child| yield(child) }
       else

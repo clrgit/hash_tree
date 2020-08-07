@@ -79,15 +79,32 @@ shared_examples_for "a HashTree::Node" do |klass|
 
   describe "#each" do
     context "with a block" do
-      it "executes the block on each child" do
+      it "executes the block for each key-child pair" do
         result = []
-        lvl3.each { |node| result << node }
-        expect(result).to eq [lvl4_1, lvl4_2, lvl4_3]
+        lvl3.each { |key, node| result << [key, node] }
+        expect(result).to eq [["LVL4_1", lvl4_1], ["LVL4_2", lvl4_2], ["LVL4_3", lvl4_3]]
       end
     end
     context "without a block" do
       it "returns an enumerator of the child nodes" do
         val = lvl3.each
+        expect(val).to be_a Enumerator
+        expect(val.to_a).to eq [["LVL4_1", lvl4_1], ["LVL4_2", lvl4_2], ["LVL4_3", lvl4_3]]
+      end
+    end
+  end
+
+  describe "#each_child" do
+    context "with a block" do
+      it "executes the block on each child" do
+        result = []
+        lvl3.each_child { |node| result << node }
+        expect(result).to eq [lvl4_1, lvl4_2, lvl4_3]
+      end
+    end
+    context "without a block" do
+      it "returns an enumerator of the child nodes" do
+        val = lvl3.each_child
         expect(val).to be_a Enumerator
         expect(val.to_a).to eq [lvl4_1, lvl4_2, lvl4_3]
       end
