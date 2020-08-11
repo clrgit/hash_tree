@@ -52,6 +52,12 @@ shared_examples_for "a HashTree::Node" do |klass|
     it "returns true iff key identifies a child"
   end
 
+  describe "#keys" do
+    it "returns a list of keys" do
+      expect(lvl3.keys).to eq %w(LVL4_1 LVL4_2 LVL4_3)
+    end
+  end
+
   describe "#root" do
     it "returns the root element or self if parent is nil" do
       expect(root.root).to be root

@@ -53,6 +53,9 @@ module HashTree
     # Returns true iff key is included in children
     def key?(key) @children.key?(key) end
 
+    # List of keys
+    def keys() @children.keys end
+
     # The root object or self if parent is nil
     def root() @root ||= (parent&.root || self) end
 
@@ -66,6 +69,15 @@ module HashTree
     # true, also include self as the last element
     def ancestors(include_self = false)
       (@ancestors ||= parents(false).reverse) + (include_self ? [self] : [])
+    end
+
+    # Recursively lookup object by dot-separated list of keys
+    #
+    # Note that for this to work, keys may not contain a dots ('.')
+    def dot(path)
+      path.split(".").inject(self) { |a,e| 
+        a[e] or raise Error, "Can't lookup '#{e}' in #{a.path.inspect}" 
+      }
     end
 
     # List of [key, child] tuples
@@ -86,14 +98,12 @@ module HashTree
       end
     end
 
-    # Recursively lookup object by dot-separated list of keys
-    #
-    # Note that for this to work, keys may not contain a dots ('.')
-    def dot(path)
-      path.split(".").inject(self) { |a,e| 
-        a[e] or raise Error, "Can't lookup '#{e}' in #{a.path.inspect}" 
-      }
-    end
+    # :include => emit node and continue to children
+    # :fetch => emit node but skip children
+    # :exclude => skip node and continue to children
+    # :prune => skip node and children
+    #def filter(...)
+    #end
 
   protected
     # Attach a child node to self
