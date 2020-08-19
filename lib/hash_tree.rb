@@ -56,6 +56,9 @@ module HashTree
     # List of keys
     def keys() @children.keys end
 
+    # List of values
+    def values() @children.values end
+
     # The root object or self if parent is nil
     def root() @root ||= (parent&.root || self) end
 
