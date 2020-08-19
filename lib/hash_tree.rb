@@ -74,13 +74,13 @@ module HashTree
       (@ancestors ||= parents(false).reverse) + (include_self ? [self] : [])
     end
 
-    # Recursively lookup object by dot-separated list of keys
-    #
-    # Note that for this to work, keys may not contain a dots ('.')
-    def dot(path)
-      path.split(".").inject(self) { |a,e| 
-        a[e] or raise Error, "Can't lookup '#{e}' in #{a.path.inspect}" 
-      }
+    # Recursively lookup object by dot-separated list of keys. Note that for
+    # this to work, key names must not contain dot characters ('.')
+    def dot(path_or_keys)
+      keys = path_or_keys.is_a?(String) ? path_or_keys.split(".") : path_or_keys
+      key = keys.shift or return self
+      child = self[key] or raise "Can't lookup '#{key}' in #{self.path.inspect}"
+      child.send(:dot, keys)
     end
 
     # List of [key, child] tuples
@@ -141,7 +141,8 @@ module HashTree
   class Set < Node
     alias node_attach attach
 
-    # Key of this node
+    # Key of this node. 
+    # TODO: Make it possible/required to alias this method to provide an internal key
     attr_reader :key
 
     def initialize(parent, key)
