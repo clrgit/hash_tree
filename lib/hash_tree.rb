@@ -76,6 +76,9 @@ module HashTree
 
     # Recursively lookup object by dot-separated list of keys. Note that for
     # this to work, key names must not contain dot characters ('.')
+    #
+    # The reverse method, #path, is only defined for HashTree::Set because a
+    # HashTree::Map node doesn't know its own key
     def dot(path_or_keys)
       keys = path_or_keys.is_a?(String) ? path_or_keys.split(".") : path_or_keys
       key = keys.shift or return self
@@ -128,7 +131,7 @@ module HashTree
     # themselves constructed recursively so that iff a node has a cached
     # property, then all its parents will also cache it
     def clear_cached_properties()
-      if@root || @parents || @ancestors || @path
+      if @root || @parents || @ancestors || @path
         @root = nil
         @parents = nil
         @ancestors = nil
@@ -164,7 +167,7 @@ module HashTree
     # is always true
     #
     # Note that for this to work, keys may not contain a dots ('.')
-    def path() @path ||= ancestors(true)[1..-1].join(".") end
+    def path() @path ||= ancestors(true)[1..-1].map(&:key).join(".") end
 
     # A set node is rendered as its key
     def to_s() key.to_s end
