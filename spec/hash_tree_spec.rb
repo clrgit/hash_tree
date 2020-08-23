@@ -102,7 +102,17 @@ shared_examples_for "a HashTree::Node" do |klass|
     end
   end
 
+  describe "#preorder" do
+    it "returns the nodes in preorder" do
+      expected = [root, lvl1_1, lvl2, lvl3, lvl4_1, lvl4_2, lvl4_3, lvl1_2]
+      expect(root.preorder).to eq expected
     end
+  end
+
+  describe "#postorder" do
+    it "returns the nodes in postorder" do
+      expected = [lvl4_1, lvl4_2, lvl4_3, lvl3, lvl2, lvl1_1, lvl1_2, root]
+      expect(root.postorder).to eq expected
     end
   end
 

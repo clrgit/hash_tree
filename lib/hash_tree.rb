@@ -95,6 +95,14 @@ module HashTree
       end
     end
 
+    # Return list of nodes in preorder
+    def preorder
+      [self] + values.inject([]) { |a,e| a + e.preorder }
+    end
+
+    # Return list of nodes in postorder
+    def postorder
+      values.inject([]) { |a,e| a + e.postorder } + [self]
     end
 
     # emit := true | false
@@ -134,6 +142,9 @@ module HashTree
         @path = nil
         children.values.each { |c| c.clear_cached_properties }
       end
+    end
+
+    def do_preorder
     end
   end
 
