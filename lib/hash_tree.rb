@@ -143,9 +143,6 @@ module HashTree
         children.values.each { |c| c.clear_cached_properties }
       end
     end
-
-    def do_preorder
-    end
   end
 
   class Set < Node
