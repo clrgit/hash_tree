@@ -4,16 +4,24 @@ require "indented_io"
 # Simple tree of hashes
 #
 # TODO
-#   o each
-#   o traverse
-#   o #ancestors and #parents as enumerators
-#   o HashTree::Set, HashTree::Map, HashTree::Array
+#   o enumerators: descendants, ancestors, preorder, etc. etc.
+#   o HashTree::Array
 #   o Semantics of <=>: strictly partial so it returns nil on no common path?
 #   o Drop <=> ?
 #   o Implement #common to return common path of two elements
-#   o modularize?
+#   o Make is possible to include HashTree as a module instead of deriving from class
 #   o []=
+#   o #traverse filter?
+#   o more elaborate selectors - emit, skip
+#       :include => emit node and continue to children
+#       :fetch => emit node but skip children
+#       :exclude => skip node and continue to children
+#       :prune => skip node and children
 #
+#   + each
+#   + traverse
+#   + HashTree::Set, HashTree::Map
+
 module HashTree
   class Error < StandardError; end
 
