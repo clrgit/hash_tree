@@ -95,15 +95,11 @@ module HashTree
       end
     end
 
-    # List of child nodes
-    def each_child(&block)
-      if block_given?
-        children.values.each { |child| yield(child) }
-      else
-        children.values.each
-      end
     end
 
+    # emit := true | false
+    # continue := true | false
+    #
     # :include => emit node and continue to children
     # :fetch => emit node but skip children
     # :exclude => skip node and continue to children
