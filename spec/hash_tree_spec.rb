@@ -116,6 +116,24 @@ shared_examples_for "a HashTree::Node" do |klass|
     end
   end
 
+  describe "#traverse" do
+    it "traverses the nodes in preorder" do
+      expected = [root, lvl1_1, lvl2, lvl3, lvl4_1, lvl4_2, lvl4_3, lvl1_2]
+      r = []
+      root.traverse { |node| r << node }
+      expect(r).to eq expected
+    end
+    it "ignores children if the block returns falsy" do
+      expected = [root, lvl1_1, lvl2, lvl3, lvl1_2]
+      r = []
+      root.traverse { |node| r << node; node != lvl3 }
+      expect(r).to eq expected
+      r = []
+      root.traverse { |node| r << node; node != lvl3 ? true : nil }
+      expect(r).to eq expected
+    end
+  end
+
   describe "#dot" do
     it "looks up a path and return the matching node" do
       expect(root.dot("")).to be root

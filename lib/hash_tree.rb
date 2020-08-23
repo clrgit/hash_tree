@@ -105,15 +105,15 @@ module HashTree
       values.inject([]) { |a,e| a + e.postorder } + [self]
     end
 
-    # emit := true | false
-    # continue := true | false
+    # EXPERIMENTAL
     #
-    # :include => emit node and continue to children
-    # :fetch => emit node but skip children
-    # :exclude => skip node and continue to children
-    # :prune => skip node and children
-    #def filter(...)
-    #end
+    # Process nodes recursively. The block is called with self as argument and
+    # can return true to process its child nodes or false to skip them
+    def traverse(&block)
+      if yield(self)
+        values.each { |child| child.traverse(&block) }
+      end
+    end
 
   protected
     # Attach a child node to self
