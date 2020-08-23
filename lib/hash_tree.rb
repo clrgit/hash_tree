@@ -107,11 +107,25 @@ module HashTree
 
     # EXPERIMENTAL
     #
-    # Process nodes recursively. The block is called with self as argument and
-    # can return true to process its child nodes or false to skip them
+    # Process nodes in preorder. The block is called with the current node as
+    # argument and can return true to process its child nodes or false or nil
+    # to skip them. #traverse doesn't accumulate a result, this is the
+    # responsibily of the block
     def traverse(&block)
-      if yield(self)
-        values.each { |child| child.traverse(&block) }
+      values.each { |child| child.traverse(&block) } if yield(self)
+    end
+
+    # EXPERIMENTAL
+    #
+    # Process nodes in postorder (bottom-up). The block is called with the
+    # current node and a list of aggregated children. The optional filter
+    # argument is a lambda.  The lambda is called with the current node as
+    # argument and the node if skipped if the lambda returns falsy
+    def aggregate(filter = lambda { |node| true }, &block)
+      if filter.nil? || filter.call(self)
+        yield(self, values.map { |child| child.aggregate(filter, &block) }.compact)
+      else
+        nil
       end
     end
 
