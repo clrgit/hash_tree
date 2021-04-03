@@ -186,6 +186,12 @@ shared_examples_for "a HashTree::Node" do |klass|
       expect(root.dot("LVL1_1")).to be lvl1_1
       expect(root.dot("LVL1_1.LVL2.LVL3.LVL4_3")).to be lvl4_3
     end
+    it "raise a KeyNotFound if the key can't be found" do
+      expect { root.dot("LVL1_1.LVL2_2") }.to raise_error KeyNotFound
+    end
+    it "returns nil if :raise_on_not_found is false and the key can't be found" do
+      expect(root.dot("LVL1_1.LVL2_2", raise_on_not_found: false)).to be nil
+    end
   end
 end
 

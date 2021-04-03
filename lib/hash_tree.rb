@@ -4,6 +4,7 @@ require "indented_io"
 # Simple tree of hashes
 #
 # TODO
+#   o XPath?!
 #   o enumerators: descendants, ancestors, preorder, etc. etc.
 #   o HashTree::Array
 #   o Semantics of <=>: strictly partial so it returns nil on no common path?
@@ -24,6 +25,7 @@ require "indented_io"
 
 module HashTree
   class Error < StandardError; end
+  class KeyNotFound < Error; end
 
   # The base Node type for HashTree implementations. It is not supposed to be called
   # from user-code
@@ -87,11 +89,28 @@ module HashTree
     #
     # The reverse method, #path, is only defined for HashTree::Set because a
     # HashTree::Map node doesn't know its own key
-    def dot(path_or_keys)
+    def dot(path_or_keys, raise_on_not_found: true)
       keys = path_or_keys.is_a?(String) ? path_or_keys.split(".") : path_or_keys
       key = keys.shift or return self
-      child = self[key] or raise "Can't lookup '#{key}' in #{self.path.inspect}"
-      child.send(:dot, keys)
+      if child = dot_lookup(key)
+        child.send(:dot, keys, raise_on_not_found: raise_on_not_found)
+      elsif raise_on_not_found
+        raise KeyNotFound, "Can't lookup '#{key}' in #{self.path.inspect}"
+      else
+        nil
+      end
+    end
+
+    # Lookup key in current object. This method is used by #dot to lookup a
+    # child element and can be overridden to make #dot cross branches in the
+    # hierarchy. This is useful when you use HashTree to implement a graph
+    def dot_lookup(key)
+      self[key]
+    end
+
+    # True if path_or_keys address a node
+    def dot?(path_or_keys)
+      !dot(path_or_keys, raise_on_not_found: false).nil?
     end
 
     # List of [key, child] tuples
