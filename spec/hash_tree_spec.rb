@@ -25,7 +25,6 @@ shared_examples_for "a HashTree::Node" do |klass|
   let!(:lvl4_2) { klass.new(lvl3, "LVL4_2") }
   let!(:lvl4_3) { klass.new(lvl3, "LVL4_3") }
 
-
   describe "#parent" do
     it "reference the parent" do
       expect(lvl1_1.parent).to be root

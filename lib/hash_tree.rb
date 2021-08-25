@@ -4,6 +4,12 @@ require "indented_io"
 # Simple tree of hashes
 #
 # TODO
+#   o Different interfaces:
+#       Stable (the default - attributes are cached recursively)
+#       Dynamic (for trees with non-trivial edits - attributes are cached dynamically)
+#       Dot (for dot functionality
+#       Algorithms
+#
 #   o XPath?!
 #   o enumerators: descendants, ancestors, preorder, etc. etc.
 #   o HashTree::Array
@@ -36,9 +42,13 @@ module HashTree
     # Hash from key to child node
     attr_reader :children
 
-    def initialize(parent, key)
+    def initialize(parent, key, attach: true)
       @children = {}
-      parent&.do_attach(key, self)
+      if attach
+        parent&.do_attach(key, self)
+      else
+        @parent = parent
+      end
     end
     
     # Attach a child to self
@@ -101,13 +111,6 @@ module HashTree
       end
     end
 
-    # Lookup key in current object. This method is used by #dot to lookup a
-    # child element and can be overridden to make #dot cross branches in the
-    # hierarchy. This is useful when you use HashTree to implement a graph
-    def dot_lookup(key)
-      self[key]
-    end
-
     # True if path_or_keys address a node
     def dot?(path_or_keys)
       !dot(path_or_keys, raise_on_not_found: false).nil?
@@ -157,13 +160,20 @@ module HashTree
     end
 
   protected
-    # Attach a child node to self
+    # Attach a child node
     def do_attach(key, child)
       !@children.key?(key) or raise Error, "Duplicate child key: #{key.inspect}"
       !child.parent or raise Error, "Child is already attached"
       child.instance_variable_set(:@parent, self)
       @children[key] = child
       child.send(:clear_cached_properties)
+    end
+
+    # Lookup key in current object. This method is used by #dot to lookup a
+    # child element and can be overridden to make #dot cross branches in the
+    # hierarchy. This is useful when you use HashTree to implement a graph
+    def dot_lookup(key)
+      self[key]
     end
 
   private
@@ -193,8 +203,8 @@ module HashTree
     # TODO: Make it possible/required to alias this method to provide an internal key
     attr_reader :key
 
-    def initialize(parent, key)
-      super(parent, @key = key)
+    def initialize(parent, key, attach: true)
+      super(parent, @key = key, attach: attach)
     end
 
     def attach(child) do_attach(child.key, child) end
